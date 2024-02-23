@@ -6,7 +6,14 @@ export default (db) => {
         return await collection.insertOne(todo);
     }
 
+    async function getTodoByUserID(userID) {
+        return await collection.find({
+            userID : userID
+        }).toArray();
+    }
+
     return {
-        insertOne
-    };
+        insertOne,
+        getTodoByUserID
+    }
 };
