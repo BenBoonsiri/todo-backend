@@ -23,7 +23,8 @@ export default ({todoRepository}) => {
                 ...req.body,
                 todoID,
                 userID: session.userID,
-                created
+                created,
+                checked: false,
             };
 
             if (validateTodo(newTodo)) {
@@ -46,12 +47,38 @@ export default ({todoRepository}) => {
 
             const todos = await todoRepository.getTodoByUserID(session.userID);
             console.log("TODOS:", todos);
-            return res.status(200).send(todos)
+            if (todos) {
+                delete todos._id;
+                return res.status(200).send(todos)
+            }
+            else {
+                return res.status(400).send({});
+            }
         }
         catch (err) {
             console.error(err);
             res.status(500).send({error: "Failed to fetch todo items."});
         }
     });
+
+    // Checks todo list
+    router.patch('/check', auth, async (req, res) => {
+        try {
+            if (typeof req.body.todoID !== 'undefined' && typeof req.body.checked !== 'undefined'){
+                let result = await todoRepository.checkOne(req.body.todoID, req.body.checked)
+                return res.status(200).send(result);
+            }
+            console.log("missing fields are", req.body)
+            console.log("missing fields are", req.body.todoID )
+            console.log("missing fields are", req.body.checked)
+            return res.status(400).send({error: "Missing fields."});
+
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).send({error: "check todo item failed."});
+        }
+    });
+
     return router;
 }

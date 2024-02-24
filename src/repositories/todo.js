@@ -6,6 +6,14 @@ export default (db) => {
         return await collection.insertOne(todo);
     }
 
+    async function checkOne(todoID, checked) {
+        // Update the checked field of a todo document
+        return await collection.updateOne(
+            { todoID: todoID },
+            { $set: { ["checked"]: checked } }
+        );
+    }
+
     async function getTodoByUserID(userID) {
         return await collection.find({
             userID : userID
@@ -14,6 +22,7 @@ export default (db) => {
 
     return {
         insertOne,
-        getTodoByUserID
+        getTodoByUserID,
+        checkOne
     }
 };
