@@ -80,5 +80,20 @@ export default ({todoRepository}) => {
         }
     });
 
+    // remove todo item
+    router.delete('/', auth, async (req, res) => {
+        try {
+            if (typeof req.body.todoID !== 'undefined'){
+                let result = await todoRepository.deleteOne(req.body.todoID, req.body.checked)
+                return res.status(200).send(result);
+            }
+            return res.status(400).send({error: "Missing fields."});
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).send({error: "delete todo item failed."});
+        }
+    });
+
     return router;
 }
