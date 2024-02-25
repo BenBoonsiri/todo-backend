@@ -48,7 +48,7 @@ export default ({todoRepository}) => {
             let todos = await todoRepository.getTodoByUserID(session.userID);
 
             // sort by creation date
-            todos = todos.sort((a,b) => dayjs(a.created).diff(dayjs(b.created)))
+            todos = todos.sort((a,b) => dayjs(b.created).diff(dayjs(a.created)))
 
             if (todos) {
                 delete todos._id;
