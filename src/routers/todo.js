@@ -45,8 +45,11 @@ export default ({todoRepository}) => {
         try {
             let session = verifyToken(req.cookies['todox-session']);
 
-            const todos = await todoRepository.getTodoByUserID(session.userID);
-            console.log("TODOS:", todos);
+            let todos = await todoRepository.getTodoByUserID(session.userID);
+
+            // sort by creation date
+            todos = todos.sort((a,b) => dayjs(a.created).diff(dayjs(b.created)))
+
             if (todos) {
                 delete todos._id;
                 return res.status(200).send(todos)
@@ -68,9 +71,6 @@ export default ({todoRepository}) => {
                 let result = await todoRepository.checkOne(req.body.todoID, req.body.checked)
                 return res.status(200).send(result);
             }
-            console.log("missing fields are", req.body)
-            console.log("missing fields are", req.body.todoID )
-            console.log("missing fields are", req.body.checked)
             return res.status(400).send({error: "Missing fields."});
 
         }
